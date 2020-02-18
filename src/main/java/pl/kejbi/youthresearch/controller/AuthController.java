@@ -1,0 +1,38 @@
+package pl.kejbi.youthresearch.controller;
+
+import lombok.AllArgsConstructor;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import pl.kejbi.youthresearch.model.User;
+import pl.kejbi.youthresearch.model.dto.RegistrationDto;
+import pl.kejbi.youthresearch.service.AuthService;
+
+import javax.validation.Valid;
+import javax.validation.ValidationException;
+
+@RestController
+@RequestMapping("/register")
+@AllArgsConstructor
+public class AuthController {
+
+    private final AuthService authService;
+
+    @PostMapping
+    public User registerUser(@RequestBody @Valid RegistrationDto registrationDto, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            throw new ValidationException("invalid registration input");
+        }
+
+        return authService.registerUser(
+                registrationDto.getName(),
+                registrationDto.getSurname(),
+                registrationDto.getEmail(),
+                registrationDto.getPassword(),
+                registrationDto.getSecret(),
+                registrationDto.isTutor()
+        );
+    }
+}
