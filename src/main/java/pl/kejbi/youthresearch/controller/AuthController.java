@@ -14,19 +14,20 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 @RestController
-@RequestMapping("/register")
+@RequestMapping("/auth")
 @AllArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping
+    @PostMapping("/register")
     public User registerUser(@RequestBody @Valid RegistrationDto registrationDto, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
             throw new ValidationException("invalid registration input");
         }
 
         return authService.registerUser(
+                registrationDto.getUsername(),
                 registrationDto.getName(),
                 registrationDto.getSurname(),
                 registrationDto.getEmail(),

@@ -2,6 +2,7 @@ package pl.kejbi.youthresearch.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.kejbi.youthresearch.model.Member;
 import pl.kejbi.youthresearch.model.Tutor;
 import pl.kejbi.youthresearch.model.User;
@@ -23,10 +24,12 @@ public class AuthService {
 
     private final String secret = "AwdGb3";
 
-    public User registerUser(String name, String surname, String email, String password, String secret, boolean isTutor) {
+    @Transactional
+    public User registerUser(String username, String name, String surname, String email, String password, String secret, boolean isTutor) {
 
         if(!isTutor) {
             Member member = new Member();
+            member.setUsername(username);
             member.setName(name);
             member.setSurname(surname);
             member.setPassword(passwordEncoder.encode(password));
@@ -35,6 +38,7 @@ public class AuthService {
         }
         else if(secret.equals(this.secret)) {
             Tutor tutor = new Tutor();
+            tutor.setUsername(username);
             tutor.setName(name);
             tutor.setSurname(surname);
             tutor.setPassword(passwordEncoder.encode(password));
