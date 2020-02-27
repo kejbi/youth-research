@@ -6,9 +6,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.kejbi.youthresearch.model.AuthUser;
-import pl.kejbi.youthresearch.model.User;
+import pl.kejbi.youthresearch.model.Tutor;
 import pl.kejbi.youthresearch.repository.MemberRepository;
 import pl.kejbi.youthresearch.repository.TutorRepository;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -21,17 +23,10 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
 
-        User user;
-        if(tutorRepository.findTutorByUsername(s).isPresent()) {
-            user = tutorRepository.findTutorByUsername(s).get();
-        }
-        else {
-            user = memberRepository.findMemberByUsername(s).orElseThrow(() -> new UsernameNotFoundException("No username found"));
-        }
+        Optional<Tutor> user = tutorRepository.findTutorByUsername(s);
 
-        AuthUser userDetails = new AuthUser();
-        userDetails.setUser(user);
+        return user.map(AuthUser::new)
+                .orElseGet(() -> new AuthUser(memberRepository.findMemberByUsername(s).orElseThrow(() -> new UsernameNotFoundException("Username not found"))));
 
-        return userDetails;
     }
 }

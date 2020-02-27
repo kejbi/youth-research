@@ -1,4 +1,4 @@
-package pl.kejbi.youthresearch.model.dto;
+package pl.kejbi.youthresearch.security.payloads;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RegistrationDto {
+public class RegistrationRequest {
 
     @NotBlank
     @Length(min = 2, max = 20)
