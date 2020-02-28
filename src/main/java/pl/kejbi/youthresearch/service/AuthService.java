@@ -28,6 +28,9 @@ public class AuthService {
     public User registerUser(String username, String name, String surname, String email, String password, String secret, boolean isTutor) {
 
         if(!isTutor) {
+            if (tutorRepository.existsByUsernameOrEmail(username, email)) {
+                throw new ValidationException("username or email already taken");
+            }
             Member member = new Member();
             member.setUsername(username);
             member.setName(name);
@@ -37,6 +40,9 @@ public class AuthService {
             return memberRepository.save(member);
         }
         else if(secret.equals(this.secret)) {
+            if (memberRepository.existsByUsernameOrEmail(username, email)) {
+                throw new ValidationException("username or email already taken");
+            }
             Tutor tutor = new Tutor();
             tutor.setUsername(username);
             tutor.setName(name);

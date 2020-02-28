@@ -15,8 +15,8 @@ import java.util.List;
 @Setter
 public class Member extends User {
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tutors_group_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tutors_group_id")
     private TutorsGroup tutorsGroup;
 
     @ManyToMany(

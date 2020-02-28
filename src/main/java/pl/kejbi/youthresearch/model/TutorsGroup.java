@@ -17,6 +17,7 @@ public class TutorsGroup {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(unique = true)
     private String name;
 
     @OneToMany(mappedBy = "tutorsGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
