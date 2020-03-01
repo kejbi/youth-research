@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import pl.kejbi.youthresearch.controller.dto.TutorsGroupDTO;
 import pl.kejbi.youthresearch.controller.dto.TutorsGroupJoinRequestDTO;
 import pl.kejbi.youthresearch.controller.dto.TutorsGroupRequest;
 import pl.kejbi.youthresearch.model.AuthUser;
@@ -23,14 +24,16 @@ public class TutorsGroupController {
     private final TutorsGroupService tutorsGroupService;
 
     @PostMapping
-    public TutorsGroup createTutorsGroup(@AuthenticationPrincipal AuthUser currentUser, @RequestBody @Valid TutorsGroupRequest tutorsGroupRequest, BindingResult bindingResult) {
+    public TutorsGroupDTO createTutorsGroup(@AuthenticationPrincipal AuthUser currentUser, @RequestBody @Valid TutorsGroupRequest tutorsGroupRequest, BindingResult bindingResult) {
 
         if(bindingResult.hasErrors()){
             throw new ValidationException("bad name given");
         }
         Long tutorId = currentUser.getUser().getId();
 
-        return tutorsGroupService.createGroup(tutorsGroupRequest.getName(), tutorId);
+        TutorsGroup group = tutorsGroupService.createGroup(tutorsGroupRequest.getName(), tutorId);
+        
+        return new TutorsGroupDTO(group);
     }
 
     @PostMapping("/request/{groupId}")
