@@ -6,18 +6,25 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pl.kejbi.youthresearch.model.TutorsGroupJoinRequest;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TutorsGroupJoinRequestDTO {
 
+    @NotBlank
     private Long tutorsGroupId;
 
+    @NotBlank
     private Long memberId;
+
+    private boolean accepted;
 
     public TutorsGroupJoinRequestDTO(TutorsGroupJoinRequest joinRequest) {
         this.memberId = joinRequest.getMember().getId();
         this.tutorsGroupId = joinRequest.getTutorsGroup().getId();
+        this.accepted = joinRequest.isAccepted();
     }
 }

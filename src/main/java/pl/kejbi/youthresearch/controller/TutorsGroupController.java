@@ -32,15 +32,23 @@ public class TutorsGroupController {
         Long tutorId = currentUser.getUser().getId();
 
         TutorsGroup group = tutorsGroupService.createGroup(tutorsGroupRequest.getName(), tutorId);
-        
+
         return new TutorsGroupDTO(group);
     }
 
-    @PostMapping("/request/{groupId}")
-    public TutorsGroupJoinRequestDTO createJoinRequest(@AuthenticationPrincipal AuthUser currentUser, @PathVariable Long groupId) {
+    @PostMapping("/request")
+    public TutorsGroupJoinRequestDTO createJoinRequest(@AuthenticationPrincipal AuthUser currentUser, @RequestParam Long groupId) {
 
         Member member = (Member) currentUser.getUser();
         TutorsGroupJoinRequest joinRequest = tutorsGroupService.createJoinRequest(groupId, member);
+
+        return new TutorsGroupJoinRequestDTO(joinRequest);
+    }
+
+    @PutMapping("/request/{requestId}")
+    public TutorsGroupJoinRequestDTO acceptJoinRequest(@PathVariable Long requestId) {
+
+        TutorsGroupJoinRequest joinRequest = tutorsGroupService.acceptJoinRequest(requestId);
 
         return new TutorsGroupJoinRequestDTO(joinRequest);
     }

@@ -7,6 +7,7 @@ import pl.kejbi.youthresearch.model.Member;
 import pl.kejbi.youthresearch.model.Tutor;
 import pl.kejbi.youthresearch.model.TutorsGroup;
 import pl.kejbi.youthresearch.model.TutorsGroupJoinRequest;
+import pl.kejbi.youthresearch.repository.MemberRepository;
 import pl.kejbi.youthresearch.repository.TutorRepository;
 import pl.kejbi.youthresearch.repository.TutorsGroupJoinRequestRepository;
 import pl.kejbi.youthresearch.repository.TutorsGroupRepository;
@@ -21,6 +22,8 @@ public class TutorsGroupService {
     private final TutorRepository tutorRepository;
 
     private final TutorsGroupJoinRequestRepository tutorsGroupJoinRequestRepository;
+
+    private final MemberRepository memberRepository;
 
     @Transactional
     public TutorsGroup createGroup(String name, Long tutorId) {
@@ -45,5 +48,19 @@ public class TutorsGroupService {
         joinRequest.setAccepted(false);
 
         return tutorsGroupJoinRequestRepository.save(joinRequest);
+    }
+
+    @Transactional
+    public TutorsGroupJoinRequest acceptJoinRequest(Long requestId) {
+
+        TutorsGroupJoinRequest request = tutorsGroupJoinRequestRepository.findById(requestId).orElseThrow(RuntimeException::new);
+        request.setAccepted(true);
+        TutorsGroup tutorsGroup = request.getTutorsGroup();
+        Member member = request.getMember();
+        member.setTutorsGroup(tutorsGroup);
+
+        memberRepository.save(member);
+
+        return tutorsGroupJoinRequestRepository.save(request);
     }
 }

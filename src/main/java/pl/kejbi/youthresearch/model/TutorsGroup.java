@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,10 +22,14 @@ public class TutorsGroup {
     private String name;
 
     @OneToMany(mappedBy = "tutorsGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Member> members;
+    private List<Member> members = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tutor_id", nullable = false)
     private Tutor tutor;
+
+    public void addMember(Member member) {
+        this.members.add(member);
+    }
 
 }
