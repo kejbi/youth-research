@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -15,18 +16,18 @@ import java.util.List;
 public class Poll {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String question;
 
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
-    private LocalDate finishDate;
+    private LocalDateTime finishDate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tutor_id", nullable = false)
-    private Tutor tutor;
+    @JoinColumn(name = "tutors_group_id", nullable = false)
+    private TutorsGroup tutorsGroup;
 
     @OneToMany(mappedBy = "poll",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Answer> answers;

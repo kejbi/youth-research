@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,7 +15,7 @@ import java.util.List;
 public class Answer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String answer;
@@ -35,5 +36,5 @@ public class Answer {
             joinColumns = {@JoinColumn(name = "answer_id")},
             inverseJoinColumns = {@JoinColumn(name = "member_id")}
     )
-    private List<Member> members;
+    private List<Member> members = new ArrayList<>();
 }

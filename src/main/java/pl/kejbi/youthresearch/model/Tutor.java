@@ -19,12 +19,6 @@ import java.util.List;
 public class Tutor extends User {
 
     @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Poll> polls;
-
-    @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Post> posts;
-
-    @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TutorsGroup> groups;
 
 
