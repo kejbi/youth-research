@@ -6,9 +6,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.kejbi.youthresearch.controller.dto.AnswerDTO;
 import pl.kejbi.youthresearch.controller.dto.PollDTO;
-import pl.kejbi.youthresearch.model.AuthUser;
-import pl.kejbi.youthresearch.model.Poll;
-import pl.kejbi.youthresearch.model.Tutor;
+import pl.kejbi.youthresearch.controller.dto.VoteDTO;
+import pl.kejbi.youthresearch.model.*;
 import pl.kejbi.youthresearch.service.PollService;
 
 import javax.validation.Valid;
@@ -53,5 +52,18 @@ public class PollController {
         Tutor tutor = (Tutor) user.getUser();
 
         pollService.deletePoll(tutor.getId(), pollId);
+    }
+
+    @PutMapping
+    public AnswerDTO voteInPoll(@AuthenticationPrincipal AuthUser user, @RequestBody @Valid VoteDTO voteDTO, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException();
+        }
+
+        Member member = (Member) user.getUser();
+        Answer answer = pollService.voteInPoll(member.getId(), voteDTO.getAnswerId());
+
+        return new AnswerDTO(answer);
     }
 }

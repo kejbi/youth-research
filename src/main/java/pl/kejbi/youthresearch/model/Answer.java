@@ -37,4 +37,26 @@ public class Answer {
             inverseJoinColumns = {@JoinColumn(name = "member_id")}
     )
     private List<Member> members = new ArrayList<>();
+
+    public void addMember(Member member) {
+        members.add(member);
+    }
+
+    public void deleteMember(Member member) {
+        members.remove(member);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Answer)) {
+            return false;
+        }
+        Answer answer = (Answer) obj;
+
+        return answer.getId().equals(this.getId());
+    }
 }

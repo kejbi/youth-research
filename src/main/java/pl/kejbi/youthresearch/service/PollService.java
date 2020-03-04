@@ -3,11 +3,9 @@ package pl.kejbi.youthresearch.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.kejbi.youthresearch.model.Answer;
-import pl.kejbi.youthresearch.model.Poll;
-import pl.kejbi.youthresearch.model.Tutor;
-import pl.kejbi.youthresearch.model.TutorsGroup;
+import pl.kejbi.youthresearch.model.*;
 import pl.kejbi.youthresearch.repository.AnswerRepository;
+import pl.kejbi.youthresearch.repository.MemberRepository;
 import pl.kejbi.youthresearch.repository.PollRepository;
 import pl.kejbi.youthresearch.repository.TutorsGroupRepository;
 
@@ -24,6 +22,8 @@ public class PollService {
     private final AnswerRepository answerRepository;
 
     private final TutorsGroupRepository tutorsGroupRepository;
+
+    private final MemberRepository memberRepository;
 
     @Transactional
     public Poll createPoll(Long tutorId, Long tutorsGroupId, String question, LocalDateTime startTime, LocalDateTime finishTime, List<String> answers) {
@@ -76,5 +76,33 @@ public class PollService {
         }
 
         pollRepository.delete(poll);
+    }
+
+    @Transactional
+    public Answer voteInPoll(Long memberId, Long answerId) {
+
+        Answer answer = answerRepository.findById(answerId).orElseThrow(RuntimeException::new);
+        Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+        Poll poll = answer.getPoll();
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isBefore(poll.getStartDate()) || now.isAfter(poll.getFinishDate())) {
+            throw new RuntimeException("Cannot vote in this poll");
+        }
+        if (member.getAnswers().contains(answer)) {
+            return answer;
+        }
+
+        List<Answer> answers = poll.getAnswers();
+        answers.forEach(ans -> {
+            if (ans.getMembers().contains(member)) {
+                ans.deleteMember(member);
+                answerRepository.save(ans);
+            }
+        });
+
+        answer.addMember(member);
+
+        return answerRepository.save(answer);
     }
 }

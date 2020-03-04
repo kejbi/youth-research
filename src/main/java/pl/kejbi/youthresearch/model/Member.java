@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,7 +28,27 @@ public class Member extends User {
             },
             mappedBy = "members"
     )
-    private List<Answer> answers;
+    private List<Answer> answers = new ArrayList<>();
 
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+    }
 
+    public void deleteAnswer(Answer answer) {
+        answers.remove(answer);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Member)) {
+            return false;
+        }
+        Member member = (Member) obj;
+
+        return this.getId().equals(((Member) obj).getId());
+    }
 }
