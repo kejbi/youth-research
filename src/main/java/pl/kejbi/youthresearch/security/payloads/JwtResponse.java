@@ -12,4 +12,8 @@ public class JwtResponse {
     private String token;
 
     private String tokenType = "Bearer";
+
+    private String username;
+
+    private String role;
 }

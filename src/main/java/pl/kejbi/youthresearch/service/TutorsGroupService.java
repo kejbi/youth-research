@@ -3,14 +3,13 @@ package pl.kejbi.youthresearch.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.kejbi.youthresearch.model.Member;
-import pl.kejbi.youthresearch.model.Tutor;
-import pl.kejbi.youthresearch.model.TutorsGroup;
-import pl.kejbi.youthresearch.model.TutorsGroupJoinRequest;
+import pl.kejbi.youthresearch.model.*;
 import pl.kejbi.youthresearch.repository.MemberRepository;
 import pl.kejbi.youthresearch.repository.TutorRepository;
 import pl.kejbi.youthresearch.repository.TutorsGroupJoinRequestRepository;
 import pl.kejbi.youthresearch.repository.TutorsGroupRepository;
+
+import java.util.List;
 
 
 @Service
@@ -57,10 +56,19 @@ public class TutorsGroupService {
         request.setAccepted(true);
         TutorsGroup tutorsGroup = request.getTutorsGroup();
         Member member = request.getMember();
-        member.setTutorsGroup(tutorsGroup);
-
-        memberRepository.save(member);
+        tutorsGroup.addMember(member);
+        tutorsGroupRepository.save(tutorsGroup);
 
         return tutorsGroupJoinRequestRepository.save(request);
+    }
+
+    @Transactional
+    public List<TutorsGroup> getGroupsByUser(User user) {
+        if(user instanceof Tutor) {
+            return tutorsGroupRepository.findAllByTutor((Tutor) user);
+        }
+        else {
+            return tutorsGroupRepository.findAllByMembers((Member) user);
+        }
     }
 }

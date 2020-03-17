@@ -16,9 +16,15 @@ import java.util.List;
 @Setter
 public class Member extends User {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tutors_group_id")
-    private TutorsGroup tutorsGroup;
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
+            mappedBy = "members"
+    )
+    private List<TutorsGroup> tutorsGroups;
 
     @ManyToMany(
             fetch = FetchType.LAZY,
@@ -49,6 +55,6 @@ public class Member extends User {
         }
         Member member = (Member) obj;
 
-        return this.getId().equals(((Member) obj).getId());
+        return this.getId().equals(member.getId());
     }
 }

@@ -17,7 +17,7 @@ public class JwtProvider {
 
     private static final String SECRET = "ABGDsdfst443__24t";
 
-    private static final long JWT_TIME = 100 * 60 * 60 * 10; //10 hours
+    private static final long JWT_TIME = 1000 * 30; //10 hours
 
     public String generateToken(Authentication auth) {
         AuthUser user = (AuthUser) auth.getPrincipal();
@@ -41,6 +41,15 @@ public class JwtProvider {
                 .getBody();
 
         return claims.getSubject();
+    }
+
+    public String getRoleFromJwt(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(SECRET)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return (String) claims.get("role");
     }
 
     public boolean validateToken(String token) {

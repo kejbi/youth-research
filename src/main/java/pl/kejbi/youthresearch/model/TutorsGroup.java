@@ -21,7 +21,18 @@ public class TutorsGroup {
     @Column(unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "tutorsGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.MERGE,
+                    CascadeType.PERSIST
+            }
+    )
+    @JoinTable(
+            name = "tutorsgroup_member",
+            joinColumns = {@JoinColumn(name = "tutorsgroup_id")},
+            inverseJoinColumns = {@JoinColumn(name = "member_id")}
+    )
     private List<Member> members = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

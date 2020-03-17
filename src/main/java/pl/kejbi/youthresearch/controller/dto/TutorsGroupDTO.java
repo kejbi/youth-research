@@ -10,6 +10,8 @@ import pl.kejbi.youthresearch.model.TutorsGroup;
 @NoArgsConstructor
 public class TutorsGroupDTO {
 
+    private long id;
+
     private String name;
 
     private String tutorName;
@@ -17,6 +19,7 @@ public class TutorsGroupDTO {
     private String tutorSurname;
 
     public TutorsGroupDTO(TutorsGroup group) {
+        this.id = group.getId();
         this.name = group.getName();
         this.tutorName = group.getTutor().getName();
         this.tutorSurname = group.getTutor().getSurname();
