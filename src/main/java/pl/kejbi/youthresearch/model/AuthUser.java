@@ -20,10 +20,10 @@ public class AuthUser implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(user instanceof Tutor) {
-            return Arrays.asList(new SimpleGrantedAuthority("TUTOR"));
+            return Arrays.asList(new SimpleGrantedAuthority("ROLE_TUTOR"));
         }
         else{
-            return Arrays.asList(new SimpleGrantedAuthority("MEMBER"));
+            return Arrays.asList(new SimpleGrantedAuthority("ROLE_MEMBER"));
         }
     }
 

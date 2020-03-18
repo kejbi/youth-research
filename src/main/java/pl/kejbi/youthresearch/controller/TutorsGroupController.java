@@ -24,21 +24,20 @@ public class TutorsGroupController {
     private final TutorsGroupService tutorsGroupService;
 
     @PostMapping
-    @Secured("TUTOR")
+    @Secured("ROLE_TUTOR")
     public TutorsGroupDTO createTutorsGroup(@AuthenticationPrincipal AuthUser currentUser, @RequestBody @Valid TutorsGroupRequest tutorsGroupRequest, BindingResult bindingResult) {
 
         if(bindingResult.hasErrors()){
             throw new ValidationException("bad name given");
         }
         Long tutorId = currentUser.getUser().getId();
-
         TutorsGroup group = tutorsGroupService.createGroup(tutorsGroupRequest.getName(), tutorId);
 
         return new TutorsGroupDTO(group);
     }
 
     @PostMapping("/request")
-    @Secured("MEMBER")
+    @Secured("ROLE_MEMBER")
     public TutorsGroupJoinRequestDTO createJoinRequest(@AuthenticationPrincipal AuthUser currentUser, @RequestParam Long groupId) {
 
         Member member = (Member) currentUser.getUser();
@@ -48,7 +47,7 @@ public class TutorsGroupController {
     }
 
     @PutMapping("/request/{requestId}")
-    @Secured("TUTOR")
+    @Secured("ROLE_TUTOR")
     public TutorsGroupJoinRequestDTO acceptJoinRequest(@PathVariable Long requestId) {
 
         TutorsGroupJoinRequest joinRequest = tutorsGroupService.acceptJoinRequest(requestId);
@@ -57,7 +56,7 @@ public class TutorsGroupController {
     }
 
     @GetMapping("/my")
-    @Secured({"TUTOR", "MEMBER"})
+    @Secured({"ROLE_MEMBER", "ROLE_TUTOR"})
     public List<TutorsGroupDTO> getMyGroups(@AuthenticationPrincipal AuthUser currentUser) {
 
         User user = currentUser.getUser();
