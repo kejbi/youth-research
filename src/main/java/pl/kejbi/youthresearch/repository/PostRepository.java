@@ -8,4 +8,6 @@ import pl.kejbi.youthresearch.model.Post;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
+
+    Page<Post> findAllByTutorsGroup_Id(Pageable pageable, Long tutorsGroupId);
 }

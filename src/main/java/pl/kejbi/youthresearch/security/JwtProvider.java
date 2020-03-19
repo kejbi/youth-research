@@ -17,7 +17,7 @@ public class JwtProvider {
 
     private static final String SECRET = "ABGDsdfst443__24t";
 
-    private static final long JWT_TIME = 1000 * 30; //10 hours
+    private static final long JWT_TIME = 1000 * 120; //10 hours
 
     public String generateToken(Authentication auth) {
         AuthUser user = (AuthUser) auth.getPrincipal();

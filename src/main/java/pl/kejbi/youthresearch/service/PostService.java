@@ -1,6 +1,10 @@
 package pl.kejbi.youthresearch.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kejbi.youthresearch.model.Post;
@@ -48,5 +52,12 @@ public class PostService {
         }
 
         postRepository.delete(post);
+    }
+
+    public Page<Post> getPostsByGroupId(Long groupId, Integer page) {
+
+        Pageable pageable = PageRequest.of(page-1, 5, Sort.by("date"));
+
+        return postRepository.findAllByTutorsGroup_Id(pageable, groupId);
     }
 }

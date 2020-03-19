@@ -4,12 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import pl.kejbi.youthresearch.model.Member;
+import pl.kejbi.youthresearch.model.Post;
 import pl.kejbi.youthresearch.model.Tutor;
 import pl.kejbi.youthresearch.model.TutorsGroup;
 import pl.kejbi.youthresearch.repository.MemberRepository;
+import pl.kejbi.youthresearch.repository.PostRepository;
 import pl.kejbi.youthresearch.repository.TutorRepository;
 import pl.kejbi.youthresearch.repository.TutorsGroupRepository;
 import pl.kejbi.youthresearch.security.PasswordEncoder;
+
+import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
@@ -20,6 +24,8 @@ public class DataLoader implements CommandLineRunner {
     private final MemberRepository memberRepository;
 
     private final TutorsGroupRepository tutorsGroupRepository;
+
+    private final PostRepository postRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -64,7 +70,33 @@ public class DataLoader implements CommandLineRunner {
         group1 = tutorsGroupRepository.save(group1);
 
         group1.addMember(member1);
-        group1.addMember(member2);
+        //group1.addMember(member2);
         group1 = tutorsGroupRepository.save(group1);
+
+        TutorsGroup group2 = new TutorsGroup();
+        group2.setName("Grupa Szymona");
+        group2.setTutor(tutor2);
+        group2 = tutorsGroupRepository.save(group2);
+
+        group2.addMember(member1);
+        group2 = tutorsGroupRepository.save(group2);
+
+        for(int i=0; i<10; i++){
+            Post post = new Post();
+            post.setDate(LocalDateTime.now());
+            post.setTitle("Tytuł " + i);
+            post.setPost("Post nr "+ i);
+            post.setTutorsGroup(group1);
+            postRepository.save(post);
+        }
+
+        for(int i=0; i<7; i++){
+            Post post = new Post();
+            post.setDate(LocalDateTime.now());
+            post.setTitle(" GRUPA 2 Tytuł " + i);
+            post.setPost("Post nr "+ i);
+            post.setTutorsGroup(group2);
+            postRepository.save(post);
+        }
     }
 }
