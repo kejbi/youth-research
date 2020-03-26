@@ -29,7 +29,7 @@ public class PollController {
     public PollDTO createPoll(@AuthenticationPrincipal AuthUser user, @RequestBody @Valid PollDTO pollDTO, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            throw new ValidationException();
+            throw new ValidationException("Invalid poll creation request");
         }
 
         Tutor tutor = (Tutor) user.getUser();
@@ -61,7 +61,7 @@ public class PollController {
     public PollDTO voteInPoll(@AuthenticationPrincipal AuthUser user, @RequestBody @Valid VoteDTO voteDTO, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            throw new ValidationException();
+            throw new ValidationException("Invalid vote request");
         }
 
         Member member = (Member) user.getUser();

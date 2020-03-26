@@ -5,8 +5,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import pl.kejbi.youthresearch.exception.BadSecretException;
-import pl.kejbi.youthresearch.exception.UsernameOrEmailTakenException;
+import pl.kejbi.youthresearch.exception.*;
 
 import javax.validation.ValidationException;
 
@@ -42,5 +41,46 @@ public class RESTAdviser {
 
         return errorResponse;
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse resourceNotFoundExceptionHandler(Exception ex) {
+
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage(ex.getMessage());
+
+        return errorResponse;
+    }
+
+    @ExceptionHandler(NotYourResourceException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse notYourResourceExceptionHandler(Exception ex) {
+
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage(ex.getMessage());
+
+        return errorResponse;
+    }
+
+    @ExceptionHandler(InactiveResourceException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse inactiveResourceExceptionHandler(Exception ex) {
+
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage(ex.getMessage());
+
+        return errorResponse;
+    }
+
+    @ExceptionHandler(InvalidTimeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse invalidTimeExceptionHandler(Exception ex) {
+
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage(ex.getMessage());
+
+        return errorResponse;
+    }
+
 
 }

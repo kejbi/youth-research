@@ -7,6 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.kejbi.youthresearch.exception.InactiveResourceException;
+import pl.kejbi.youthresearch.exception.InvalidTimeException;
+import pl.kejbi.youthresearch.exception.NotYourResourceException;
+import pl.kejbi.youthresearch.exception.ResourceNotFoundException;
 import pl.kejbi.youthresearch.model.*;
 import pl.kejbi.youthresearch.repository.AnswerRepository;
 import pl.kejbi.youthresearch.repository.MemberRepository;
@@ -32,13 +36,13 @@ public class PollService {
     @Transactional
     public Poll createPoll(Long tutorId, Long tutorsGroupId, String question, LocalDateTime startTime, LocalDateTime finishTime, List<String> answers) {
 
-        TutorsGroup tutorsGroup = tutorsGroupRepository.findById(tutorsGroupId).orElseThrow(RuntimeException::new);
+        TutorsGroup tutorsGroup = tutorsGroupRepository.findById(tutorsGroupId).orElseThrow(() -> new ResourceNotFoundException(TutorsGroup.class, "id", tutorsGroupId));
 
         if (!tutorsGroup.getTutor().getId().equals(tutorId)) {
-            throw new RuntimeException("Group does not belong to that tutor");
+            throw new NotYourResourceException(TutorsGroup.class, tutorsGroupId);
         }
         if (startTime.isAfter(finishTime)){
-            throw new RuntimeException("start time must be before finish time");
+            throw new InvalidTimeException("Start time must be before finish time");
         }
 
         Poll poll = new Poll();
@@ -46,7 +50,6 @@ public class PollService {
         poll.setTutorsGroup(tutorsGroup);
         poll.setStartDate(startTime);
         poll.setFinishDate(finishTime);
-
         Poll savedPoll = pollRepository.save(poll);
 
         List<Answer> answerList = answers.stream()
@@ -72,11 +75,11 @@ public class PollService {
     @Transactional
     public void deletePoll(Long tutorId, Long pollId) {
 
-        Poll poll = pollRepository.findById(pollId).orElseThrow(RuntimeException::new);
+        Poll poll = pollRepository.findById(pollId).orElseThrow(() -> new ResourceNotFoundException(Poll.class, "id", pollId));
         Tutor tutor = poll.getTutorsGroup().getTutor();
 
         if(!tutor.getId().equals(tutorId)) {
-            throw new RuntimeException("Poll does not belong to that tutor");
+            throw new NotYourResourceException(Poll.class, poll.getId());
         }
 
         pollRepository.delete(poll);
@@ -85,13 +88,13 @@ public class PollService {
     @Transactional
     public Answer voteInPoll(Long memberId, Long answerId) {
 
-        Answer answer = answerRepository.findById(answerId).orElseThrow(RuntimeException::new);
-        Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+        Answer answer = answerRepository.findById(answerId).orElseThrow(() -> new ResourceNotFoundException(Answer.class, "id", answerId));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new ResourceNotFoundException(Member.class, "id", memberId));
         Poll poll = answer.getPoll();
         LocalDateTime now = LocalDateTime.now();
 
         if (now.isBefore(poll.getStartDate()) || now.isAfter(poll.getFinishDate())) {
-            throw new RuntimeException("Cannot vote in this poll");
+            throw new InactiveResourceException(Poll.class, poll.getId());
         }
         if (member.getAnswers().contains(answer)) {
             return answer;

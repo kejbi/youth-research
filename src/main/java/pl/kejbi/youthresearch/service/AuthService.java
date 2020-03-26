@@ -40,6 +40,7 @@ public class AuthService {
             member.setSurname(surname);
             member.setPassword(passwordEncoder.encode(password));
             member.setEmail(email);
+
             return memberRepository.save(member);
         }
         else if(secret.equals(this.secret)) {
@@ -49,6 +50,7 @@ public class AuthService {
             tutor.setSurname(surname);
             tutor.setPassword(passwordEncoder.encode(password));
             tutor.setEmail(email);
+
             return tutorRepository.save(tutor);
         }
         else {

@@ -3,6 +3,7 @@ package pl.kejbi.youthresearch.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.kejbi.youthresearch.exception.ResourceNotFoundException;
 import pl.kejbi.youthresearch.model.*;
 import pl.kejbi.youthresearch.repository.MemberRepository;
 import pl.kejbi.youthresearch.repository.TutorRepository;
@@ -22,13 +23,10 @@ public class TutorsGroupService {
 
     private final TutorsGroupJoinRequestRepository tutorsGroupJoinRequestRepository;
 
-    private final MemberRepository memberRepository;
-
     @Transactional
     public TutorsGroup createGroup(String name, Long tutorId) {
-        //exception to do
-        Tutor tutor = tutorRepository.findById(tutorId).orElseThrow(RuntimeException::new);
 
+        Tutor tutor = tutorRepository.findById(tutorId).orElseThrow(() -> new ResourceNotFoundException(Tutor.class, "id", tutorId));
         TutorsGroup group = new TutorsGroup();
         group.setName(name);
         group.setTutor(tutor);
@@ -38,9 +36,8 @@ public class TutorsGroupService {
 
     @Transactional
     public TutorsGroupJoinRequest createJoinRequest(Long groupId, Member member) {
-        //exception to do
-        TutorsGroup tutorsGroup = tutorsGroupRepository.findById(groupId).orElseThrow(RuntimeException::new);
 
+        TutorsGroup tutorsGroup = tutorsGroupRepository.findById(groupId).orElseThrow(() -> new ResourceNotFoundException(TutorsGroup.class, "id", groupId));
         TutorsGroupJoinRequest joinRequest = new TutorsGroupJoinRequest();
         joinRequest.setMember(member);
         joinRequest.setTutorsGroup(tutorsGroup);
@@ -52,7 +49,7 @@ public class TutorsGroupService {
     @Transactional
     public TutorsGroupJoinRequest acceptJoinRequest(Long requestId) {
 
-        TutorsGroupJoinRequest request = tutorsGroupJoinRequestRepository.findById(requestId).orElseThrow(RuntimeException::new);
+        TutorsGroupJoinRequest request = tutorsGroupJoinRequestRepository.findById(requestId).orElseThrow(() -> new ResourceNotFoundException(TutorsGroupJoinRequest.class, "id", requestId));
         request.setAccepted(true);
         TutorsGroup tutorsGroup = request.getTutorsGroup();
         Member member = request.getMember();
@@ -62,7 +59,6 @@ public class TutorsGroupService {
         return tutorsGroupJoinRequestRepository.save(request);
     }
 
-    @Transactional
     public List<TutorsGroup> getGroupsByUser(User user) {
         if(user instanceof Tutor) {
             return tutorsGroupRepository.findAllByTutor((Tutor) user);

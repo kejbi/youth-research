@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.kejbi.youthresearch.exception.NotYourResourceException;
+import pl.kejbi.youthresearch.exception.ResourceNotFoundException;
 import pl.kejbi.youthresearch.model.Post;
 import pl.kejbi.youthresearch.model.Tutor;
 import pl.kejbi.youthresearch.model.TutorsGroup;
@@ -26,10 +28,10 @@ public class PostService {
     @Transactional
     public Post createPost(Long tutorId, Long tutorsGroupId, String title, String postText) {
 
-        TutorsGroup tutorsGroup = tutorGroupRepository.findById(tutorsGroupId).orElseThrow(RuntimeException::new);
+        TutorsGroup tutorsGroup = tutorGroupRepository.findById(tutorsGroupId).orElseThrow(() -> new ResourceNotFoundException(TutorsGroup.class, "id", tutorsGroupId));
 
         if (!tutorsGroup.getTutor().getId().equals(tutorId)) {
-            throw new RuntimeException("Group does not belong to that tutor");
+            throw new NotYourResourceException(TutorsGroup.class, tutorsGroupId);
         }
 
         Post post = new Post();
@@ -44,11 +46,11 @@ public class PostService {
     @Transactional
     public void deletePost(Long tutorId, Long postId) {
 
-        Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(Post.class, "id", postId));
         Tutor tutor = post.getTutorsGroup().getTutor();
 
         if(!tutor.getId().equals(tutorId)) {
-            throw new RuntimeException("Post does not belong to that tutor");
+            throw new NotYourResourceException(Post.class, postId);
         }
 
         postRepository.delete(post);
