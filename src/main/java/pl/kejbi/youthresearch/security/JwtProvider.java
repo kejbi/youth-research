@@ -1,27 +1,32 @@
 package pl.kejbi.youthresearch.security;
 
 import io.jsonwebtoken.*;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import pl.kejbi.youthresearch.model.AuthUser;
 import pl.kejbi.youthresearch.model.Tutor;
+import pl.kejbi.youthresearch.service.UserService;
 
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
+
+    private final UserService userService;
 
     private static final String SECRET = "ABGDsdfst443__24t";
 
     private static final long JWT_TIME = 1000 * 60 * 30; //10 hours
 
-    public String generateToken(Authentication auth) {
-        AuthUser user = (AuthUser) auth.getPrincipal();
+    public String generateToken(String username) {
 
+        AuthUser user = (AuthUser) userService.loadUserByUsername(username);
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + JWT_TIME);
 
@@ -35,6 +40,7 @@ public class JwtProvider {
     }
 
     public String getUsernameFromJwt(String token) {
+
         Claims claims = Jwts.parser()
                 .setSigningKey(SECRET)
                 .parseClaimsJws(token)
@@ -44,6 +50,7 @@ public class JwtProvider {
     }
 
     public String getRoleFromJwt(String token) {
+
         Claims claims = Jwts.parser()
                 .setSigningKey(SECRET)
                 .parseClaimsJws(token)
@@ -53,6 +60,7 @@ public class JwtProvider {
     }
 
     public boolean validateToken(String token) {
+
         try {
             Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token);
             return true;

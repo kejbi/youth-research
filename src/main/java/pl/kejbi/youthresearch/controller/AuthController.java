@@ -34,7 +34,7 @@ public class AuthController {
     @PostMapping("/register")
     public User registerUser(@RequestBody @Valid RegistrationRequest registrationRequest, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
-            throw new ValidationException("invalid registration input");
+            throw new ValidationException("Invalid registration input");
         }
 
         return authService.registerUser(
@@ -50,17 +50,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public JwtResponse loginUser(@RequestBody @Valid LoginRequest loginRequest, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException("something gone wrong");
-        }
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(), loginRequest.getPassword()
-                )
-        );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtProvider.generateToken(authentication);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException("Invalid login request");
+        }
+
+        String token = jwtProvider.generateToken(loginRequest.getUsername());
         JwtResponse response = new JwtResponse();
         response.setToken(token);
         response.setUsername(jwtProvider.getUsernameFromJwt(token));

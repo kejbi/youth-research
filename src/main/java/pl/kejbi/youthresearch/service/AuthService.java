@@ -3,6 +3,8 @@ package pl.kejbi.youthresearch.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.kejbi.youthresearch.exception.BadSecretException;
+import pl.kejbi.youthresearch.exception.UsernameOrEmailTakenException;
 import pl.kejbi.youthresearch.model.Member;
 import pl.kejbi.youthresearch.model.Tutor;
 import pl.kejbi.youthresearch.model.User;
@@ -27,10 +29,11 @@ public class AuthService {
     @Transactional
     public User registerUser(String username, String name, String surname, String email, String password, String secret, boolean isTutor) {
 
+        if (tutorRepository.existsByUsernameOrEmail(username, email) || memberRepository.existsByUsernameOrEmail(username, email)) {
+            throw new UsernameOrEmailTakenException(username, email);
+        }
+
         if(!isTutor) {
-            if (tutorRepository.existsByUsernameOrEmail(username, email) || memberRepository.existsByUsernameOrEmail(username, email)) {
-                throw new ValidationException("username or email already taken");
-            }
             Member member = new Member();
             member.setUsername(username);
             member.setName(name);
@@ -40,9 +43,6 @@ public class AuthService {
             return memberRepository.save(member);
         }
         else if(secret.equals(this.secret)) {
-            if (memberRepository.existsByUsernameOrEmail(username, email) || tutorRepository.existsByUsernameOrEmail(username, email)) {
-                throw new ValidationException("username or email already taken");
-            }
             Tutor tutor = new Tutor();
             tutor.setUsername(username);
             tutor.setName(name);
@@ -52,7 +52,7 @@ public class AuthService {
             return tutorRepository.save(tutor);
         }
         else {
-            throw new ValidationException("bad secret");
+            throw new BadSecretException();
         }
     }
 }
