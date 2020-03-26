@@ -1,6 +1,10 @@
 package pl.kejbi.youthresearch.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kejbi.youthresearch.model.*;
@@ -104,5 +108,12 @@ public class PollService {
         answer.addMember(member);
 
         return answerRepository.save(answer);
+    }
+
+    public Page<Poll> getPollsByGroupId(Long groupId, Integer page) {
+
+        Pageable pageable = PageRequest.of(page-1, 5, Sort.by("finishDate").descending());
+
+        return pollRepository.findAllByTutorsGroup_Id(pageable, groupId);
     }
 }

@@ -35,6 +35,10 @@ public class PollDTO {
     @NotNull
     private List<AnswerDTO> answers;
 
+    private boolean active;
+
+    private int totalVotes;
+
     public PollDTO(Poll poll) {
         this.id = poll.getId();
         this.question = poll.getQuestion();
@@ -42,5 +46,10 @@ public class PollDTO {
         this.finishDate = poll.getFinishDate();
         this.tutorsGroupId = poll.getTutorsGroup().getId();
         this.answers = poll.getAnswers().stream().map(AnswerDTO::new).collect(Collectors.toList());
+        this.active = LocalDateTime.now().isBefore(poll.getFinishDate()) && LocalDateTime.now().isAfter(poll.getStartDate());
+
+        for(AnswerDTO answer: answers) {
+            this.totalVotes += answer.getVotes();
+        }
     }
 }

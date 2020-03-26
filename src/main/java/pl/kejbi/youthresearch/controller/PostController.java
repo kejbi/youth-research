@@ -26,6 +26,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
+    @Secured("ROLE_TUTOR")
     public PostDTO createPost(@AuthenticationPrincipal AuthUser user, @RequestBody @Valid PostDTO postDto, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -44,6 +45,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
+    @Secured("ROLE_TUTOR")
     public void deletePost(@AuthenticationPrincipal AuthUser user, @PathVariable Long postId) {
 
         Tutor tutor = (Tutor) user.getUser();

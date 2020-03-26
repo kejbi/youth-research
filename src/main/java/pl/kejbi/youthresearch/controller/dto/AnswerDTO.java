@@ -21,6 +21,8 @@ public class AnswerDTO {
 
     private Integer votes;
 
+    private boolean checked = false;
+
     public AnswerDTO(Answer answer) {
         this.id = answer.getId();
         this.answer = answer.getAnswer();

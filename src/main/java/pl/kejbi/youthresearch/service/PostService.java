@@ -56,7 +56,7 @@ public class PostService {
 
     public Page<Post> getPostsByGroupId(Long groupId, Integer page) {
 
-        Pageable pageable = PageRequest.of(page-1, 5, Sort.by("date"));
+        Pageable pageable = PageRequest.of(page-1, 5, Sort.by("date").descending());
 
         return postRepository.findAllByTutorsGroup_Id(pageable, groupId);
     }

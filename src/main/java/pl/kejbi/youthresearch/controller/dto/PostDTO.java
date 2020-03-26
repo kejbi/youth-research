@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import pl.kejbi.youthresearch.model.Post;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
@@ -24,7 +25,7 @@ public class PostDTO {
     @Length
     private String post;
 
-    @NotBlank
+    @NotNull
     private Long groupId;
 
     private LocalDateTime date;

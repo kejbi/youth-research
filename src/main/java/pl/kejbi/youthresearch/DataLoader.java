@@ -3,14 +3,8 @@ package pl.kejbi.youthresearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import pl.kejbi.youthresearch.model.Member;
-import pl.kejbi.youthresearch.model.Post;
-import pl.kejbi.youthresearch.model.Tutor;
-import pl.kejbi.youthresearch.model.TutorsGroup;
-import pl.kejbi.youthresearch.repository.MemberRepository;
-import pl.kejbi.youthresearch.repository.PostRepository;
-import pl.kejbi.youthresearch.repository.TutorRepository;
-import pl.kejbi.youthresearch.repository.TutorsGroupRepository;
+import pl.kejbi.youthresearch.model.*;
+import pl.kejbi.youthresearch.repository.*;
 import pl.kejbi.youthresearch.security.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -26,6 +20,10 @@ public class DataLoader implements CommandLineRunner {
     private final TutorsGroupRepository tutorsGroupRepository;
 
     private final PostRepository postRepository;
+
+    private final PollRepository pollRepository;
+
+    private final AnswerRepository answerRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -97,6 +95,22 @@ public class DataLoader implements CommandLineRunner {
             post.setPost("Post nr "+ i);
             post.setTutorsGroup(group2);
             postRepository.save(post);
+        }
+
+        for(int i=0; i<7; i++){
+            Poll poll = new Poll();
+            poll.setQuestion("Czy pytanie nr " + i +"?");
+            poll.setTutorsGroup(group2);
+            poll.setStartDate(LocalDateTime.now().minusMinutes(i));
+            poll.setFinishDate(poll.getStartDate().plusHours(1));
+            poll = pollRepository.save(poll);
+
+            for(int j=0; j<i%3+2; j++) {
+                Answer answer = new Answer();
+                answer.setAnswer("Odpowiedz nr " + j);
+                answer.setPoll(poll);
+                answerRepository.save(answer);
+            }
         }
     }
 }

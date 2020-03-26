@@ -1,10 +1,13 @@
 package pl.kejbi.youthresearch.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.kejbi.youthresearch.controller.dto.AnswerDTO;
+import pl.kejbi.youthresearch.controller.dto.PagePollDTO;
 import pl.kejbi.youthresearch.controller.dto.PollDTO;
 import pl.kejbi.youthresearch.controller.dto.VoteDTO;
 import pl.kejbi.youthresearch.model.*;
@@ -46,7 +49,7 @@ public class PollController {
         return new PollDTO(poll);
     }
 
-    @DeleteMapping("{pollId}")
+    @DeleteMapping("/{pollId}")
     public void deletePoll(@AuthenticationPrincipal AuthUser user, @PathVariable Long pollId) {
 
         Tutor tutor = (Tutor) user.getUser();
@@ -55,7 +58,7 @@ public class PollController {
     }
 
     @PutMapping
-    public AnswerDTO voteInPoll(@AuthenticationPrincipal AuthUser user, @RequestBody @Valid VoteDTO voteDTO, BindingResult bindingResult) {
+    public PollDTO voteInPoll(@AuthenticationPrincipal AuthUser user, @RequestBody @Valid VoteDTO voteDTO, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException();
@@ -63,7 +66,20 @@ public class PollController {
 
         Member member = (Member) user.getUser();
         Answer answer = pollService.voteInPoll(member.getId(), voteDTO.getAnswerId());
+        Poll poll = answer.getPoll();
+        return new PollDTO(poll);
+    }
 
-        return new AnswerDTO(answer);
+    @GetMapping
+    @Secured({"ROLE_MEMBER", "ROLE_TUTOR"})
+    public PagePollDTO getPollsByGroup(@RequestParam Long groupId, @RequestParam Integer page) {
+
+        Page<Poll> pollsPage = pollService.getPollsByGroupId(groupId, page);
+        PagePollDTO dto = new PagePollDTO();
+        dto.setTotalPages(pollsPage.getTotalPages());
+        List<PollDTO> polls = pollsPage.getContent().stream().map(PollDTO::new).collect(Collectors.toList());
+        dto.setPolls(polls);
+
+        return dto;
     }
 }
