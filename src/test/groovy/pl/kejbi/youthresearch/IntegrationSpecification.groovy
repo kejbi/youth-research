@@ -5,6 +5,7 @@ import groovyx.net.http.RESTClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import pl.kejbi.youthresearch.security.JwtProvider
@@ -19,6 +20,9 @@ class IntegrationSpecification extends Specification {
 
     private Logger log = LoggerFactory.getLogger(IntegrationSpecification.getClass())
 
+    @Value('${local.server.port')
+    protected int port
+
     @Autowired
     protected JwtProvider jwtProvider
 
@@ -29,7 +33,7 @@ class IntegrationSpecification extends Specification {
 
     def setup() {
 
-        restClient = new RESTClient("http://localhost:8080", "application/json")
+        restClient = new RESTClient("http://localhost:$port", "application/json")
         setHeaders()
         restClient.handler.failure = restClient.handler.success
     }
@@ -46,7 +50,8 @@ class IntegrationSpecification extends Specification {
                 body: content
         ])
 
-        log.info(response)
+        log.info(response.toString())
+        return response
 
     }
 
