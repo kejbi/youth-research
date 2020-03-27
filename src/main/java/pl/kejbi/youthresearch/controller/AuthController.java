@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.kejbi.youthresearch.controller.dto.UserDTO;
 import pl.kejbi.youthresearch.model.User;
 import pl.kejbi.youthresearch.security.JwtProvider;
 import pl.kejbi.youthresearch.security.payloads.JwtResponse;
@@ -32,12 +33,12 @@ public class AuthController {
     private final JwtProvider jwtProvider;
 
     @PostMapping("/register")
-    public User registerUser(@RequestBody @Valid RegistrationRequest registrationRequest, BindingResult bindingResult) {
+    public UserDTO registerUser(@RequestBody @Valid RegistrationRequest registrationRequest, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
             throw new ValidationException("Invalid registration input");
         }
 
-        return authService.registerUser(
+        User user = authService.registerUser(
                 registrationRequest.getUsername(),
                 registrationRequest.getName(),
                 registrationRequest.getSurname(),
@@ -46,6 +47,8 @@ public class AuthController {
                 registrationRequest.getSecret(),
                 registrationRequest.isTutor()
         );
+
+        return new UserDTO(user);
     }
 
     @PostMapping("/login")

@@ -2,14 +2,18 @@ package pl.kejbi.youthresearch
 
 import groovy.json.JsonBuilder
 import groovyx.net.http.RESTClient
+import org.apache.groovy.json.internal.LazyMap
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
+import pl.kejbi.youthresearch.model.User
+import pl.kejbi.youthresearch.repository.MemberRepository
+import pl.kejbi.youthresearch.repository.TutorRepository
+import pl.kejbi.youthresearch.repository.TutorsGroupJoinRequestRepository
 import pl.kejbi.youthresearch.security.JwtProvider
-import spock.lang.Ignore
 import spock.lang.Specification
 
 
@@ -20,7 +24,7 @@ class IntegrationSpecification extends Specification {
 
     private Logger log = LoggerFactory.getLogger(IntegrationSpecification.getClass())
 
-    @Value('${local.server.port')
+    @Value('${local.server.port}')
     protected int port
 
     @Autowired
@@ -29,10 +33,20 @@ class IntegrationSpecification extends Specification {
     @Autowired
     protected JdbcTemplate jdbcTemplate
 
+    @Autowired
+    protected TutorRepository tutorRepository
+
+    @Autowired
+    protected MemberRepository memberRepository
+
+    @Autowired
+    protected TutorsGroupJoinRequestRepository tutorsGroupJoinRequestRepository
+
     protected RESTClient restClient
 
     def setup() {
 
+        cleanUpTables()
         restClient = new RESTClient("http://localhost:$port", "application/json")
         setHeaders()
         restClient.handler.failure = restClient.handler.success
@@ -43,35 +57,73 @@ class IntegrationSpecification extends Specification {
         restClient.setHeaders(["Content-Type" : "application/json"] + headers)
     }
 
-    def postRequest(String endpoint, String content, Boolean errorExpected = false) {
+    def authenticate(User user) {
+
+        def username = user.getUsername()
+        def token = jwtProvider.generateToken(username)
+        def header = ["Authorization": "Bearer " + token]
+        setHeaders(header)
+    }
+
+    def postRequest(String endpoint, String content) {
 
         def response = restClient.post([
                 path: endpoint,
                 body: content
         ])
 
-        log.info(response.toString())
+        if (response.status == 500) {
+            log.error(new JsonBuilder(response).toPrettyString())
+        }
+
         return response
-
     }
 
-    def "should return smth"(){
-        given:
-        def registerBody = ("""
-            {
-                "username": "member3",
-                "name": " sikiliki",
-                "surname": "basdf",
-                "email": "asdf@w.pl",
-                "password": "asdasdf",
-                "secret": "sadgafg",
-                "tutor": false}
-        """)
+    def getRequest(String endpoint) {
 
-        when:
-        def response = postRequest("/auth/register", registerBody)
+        def response = restClient.get([
+                path: endpoint
+        ])
 
-        then:
-        response.status == 200
+        if (response.status == 500) {
+            log.error(new JsonBuilder(response).toPrettyString())
+        }
+
+        return response
     }
+
+    def deleteRequest(String endpoint) {
+
+        def response = restClient.delete([
+                path: endpoint,
+        ])
+
+        if (response.status == 500) {
+            log.error(new JsonBuilder(response).toPrettyString())
+        }
+
+        return response
+    }
+
+    def putRequest(String endpoint, String content) {
+
+        def response = restClient.put([
+                path: endpoint,
+                body: content
+        ])
+
+        if (response.status == 500) {
+            log.error(new JsonBuilder(response).toPrettyString())
+        }
+
+        return response
+    }
+
+    def cleanUpTables() {
+
+        tutorRepository.deleteAll()
+        memberRepository.deleteAll()
+        tutorsGroupJoinRequestRepository.deleteAll()
+    }
+
 }
