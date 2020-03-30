@@ -7,3 +7,9 @@ Project still in progress
 - posts (adding, deleting)
 - polls (adding, answering, deleting)
 - groups (requesting, accepting)
+
+## Tests
+In progress (learning Spock)
+
+Done:
+- authentication
