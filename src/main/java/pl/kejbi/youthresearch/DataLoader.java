@@ -112,6 +112,5 @@ public class DataLoader implements CommandLineRunner {
                 answerRepository.save(answer);
             }
         }
-        tutorRepository.deleteAll();
     }
 }
