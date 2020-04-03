@@ -24,7 +24,7 @@ public class Member extends User {
             },
             mappedBy = "members"
     )
-    private List<TutorsGroup> tutorsGroups;
+    private List<TutorsGroup> tutorsGroups = new ArrayList<>();
 
     @ManyToMany(
             fetch = FetchType.LAZY,
@@ -35,14 +35,6 @@ public class Member extends User {
             mappedBy = "members"
     )
     private List<Answer> answers = new ArrayList<>();
-
-    public void addAnswer(Answer answer) {
-        answers.add(answer);
-    }
-
-    public void deleteAnswer(Answer answer) {
-        answers.remove(answer);
-    }
 
     @Override
     public boolean equals(Object obj) {

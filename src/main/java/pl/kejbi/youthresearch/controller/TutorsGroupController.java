@@ -23,12 +23,31 @@ public class TutorsGroupController {
 
     private final TutorsGroupService tutorsGroupService;
 
+    @GetMapping("/joinable")
+    @Secured("ROLE_MEMBER")
+    public List<TutorsGroupDTO> getAllJoinableGroups(@AuthenticationPrincipal AuthUser currentUser) {
+
+        Member member = (Member)currentUser.getUser();
+        List<TutorsGroup> groups = tutorsGroupService.getJoinableGroupsForMember(member);
+
+        return groups.stream().map(TutorsGroupDTO::new).collect(Collectors.toList());
+    }
+
+    @GetMapping("/request")
+    @Secured("ROLE_TUTOR")
+    public List<TutorsGroupJoinRequestDTO> getAllNotAcceptedRequestsByGroupId(@RequestParam Long groupId) {
+
+        List<TutorsGroupJoinRequest> requests = tutorsGroupService.getAllNotAcceptedRequestsByGroupId(groupId);
+
+        return requests.stream().map(TutorsGroupJoinRequestDTO::new).collect(Collectors.toList());
+    }
+
     @PostMapping
     @Secured("ROLE_TUTOR")
     public TutorsGroupDTO createTutorsGroup(@AuthenticationPrincipal AuthUser currentUser, @RequestBody @Valid TutorsGroupRequest tutorsGroupRequest, BindingResult bindingResult) {
 
         if(bindingResult.hasErrors()){
-            throw new ValidationException("bad name given");
+            throw new ValidationException("Bad name given");
         }
         Long tutorId = currentUser.getUser().getId();
         TutorsGroup group = tutorsGroupService.createGroup(tutorsGroupRequest.getName(), tutorId);

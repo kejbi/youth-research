@@ -2,6 +2,7 @@ package pl.kejbi.youthresearch
 
 import groovy.json.JsonBuilder
 import groovyx.net.http.RESTClient
+import groovyx.net.http.URIBuilder
 import org.apache.groovy.json.internal.LazyMap
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -81,8 +82,9 @@ class IntegrationSpecification extends Specification {
 
     def getRequest(String endpoint) {
 
+        def uri = new URIBuilder(new URI(restClient.uri.toString() + endpoint))
         def response = restClient.get([
-                path: endpoint
+                uri: uri
         ])
 
         if (response.status == 500) {
@@ -121,9 +123,9 @@ class IntegrationSpecification extends Specification {
 
     def cleanUpTables() {
 
+        tutorsGroupJoinRequestRepository.deleteAll()
         tutorRepository.deleteAll()
         memberRepository.deleteAll()
-        tutorsGroupJoinRequestRepository.deleteAll()
     }
 
 }

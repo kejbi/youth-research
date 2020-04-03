@@ -10,7 +10,9 @@ import pl.kejbi.youthresearch.repository.TutorRepository;
 import pl.kejbi.youthresearch.repository.TutorsGroupJoinRequestRepository;
 import pl.kejbi.youthresearch.repository.TutorsGroupRepository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -66,5 +68,16 @@ public class TutorsGroupService {
         else {
             return tutorsGroupRepository.findAllByMembers((Member) user);
         }
+    }
+
+    public List<TutorsGroup> getJoinableGroupsForMember(Member member) {
+
+        List<TutorsGroup> allGroups = tutorsGroupRepository.findAll();
+        return allGroups.stream().filter(tutorsGroup -> !(tutorsGroup.getMembers().contains(member))).collect(Collectors.toList());
+    }
+
+    public List<TutorsGroupJoinRequest> getAllNotAcceptedRequestsByGroupId(Long tutorsGroupId) {
+
+        return tutorsGroupJoinRequestRepository.findAllByAcceptedAndTutorsGroup_Id(false, tutorsGroupId);
     }
 }

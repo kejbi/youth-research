@@ -20,10 +20,16 @@ public class TutorsGroupJoinRequestDTO {
     @NotBlank
     private Long memberId;
 
+    private String groupName;
+
+    private String username;
+
     private boolean accepted;
 
     public TutorsGroupJoinRequestDTO(TutorsGroupJoinRequest joinRequest) {
         this.memberId = joinRequest.getMember().getId();
+        this.groupName = joinRequest.getTutorsGroup().getName();
+        this.username = joinRequest.getMember().getUsername();
         this.tutorsGroupId = joinRequest.getTutorsGroup().getId();
         this.accepted = joinRequest.isAccepted();
     }
