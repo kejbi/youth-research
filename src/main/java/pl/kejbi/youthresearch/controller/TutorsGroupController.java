@@ -33,7 +33,7 @@ public class TutorsGroupController {
         return groups.stream().map(TutorsGroupDTO::new).collect(Collectors.toList());
     }
 
-    @GetMapping("/request")
+    @GetMapping("/requests")
     @Secured("ROLE_TUTOR")
     public List<TutorsGroupJoinRequestDTO> getAllNotAcceptedRequestsByGroupId(@RequestParam Long groupId) {
 
@@ -65,7 +65,7 @@ public class TutorsGroupController {
         return new TutorsGroupJoinRequestDTO(joinRequest);
     }
 
-    @PutMapping("/request/{requestId}")
+    @PutMapping("/requests/{requestId}")
     @Secured("ROLE_TUTOR")
     public TutorsGroupJoinRequestDTO acceptJoinRequest(@PathVariable Long requestId) {
 

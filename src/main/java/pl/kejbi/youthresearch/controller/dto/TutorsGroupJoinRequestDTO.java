@@ -14,6 +14,8 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class TutorsGroupJoinRequestDTO {
 
+    private Long requestId;
+
     @NotBlank
     private Long tutorsGroupId;
 
@@ -24,12 +26,19 @@ public class TutorsGroupJoinRequestDTO {
 
     private String username;
 
+    private String name;
+
+    private String surname;
+
     private boolean accepted;
 
     public TutorsGroupJoinRequestDTO(TutorsGroupJoinRequest joinRequest) {
+        this.requestId = joinRequest.getId();
         this.memberId = joinRequest.getMember().getId();
         this.groupName = joinRequest.getTutorsGroup().getName();
         this.username = joinRequest.getMember().getUsername();
+        this.name = joinRequest.getMember().getName();
+        this.surname = joinRequest.getMember().getSurname();
         this.tutorsGroupId = joinRequest.getTutorsGroup().getId();
         this.accepted = joinRequest.isAccepted();
     }

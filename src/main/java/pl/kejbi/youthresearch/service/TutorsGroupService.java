@@ -27,7 +27,6 @@ public class TutorsGroupService {
 
     @Transactional
     public TutorsGroup createGroup(String name, Long tutorId) {
-
         Tutor tutor = tutorRepository.findById(tutorId).orElseThrow(() -> new ResourceNotFoundException(Tutor.class, "id", tutorId));
         TutorsGroup group = new TutorsGroup();
         group.setName(name);
@@ -38,7 +37,6 @@ public class TutorsGroupService {
 
     @Transactional
     public TutorsGroupJoinRequest createJoinRequest(Long groupId, Member member) {
-
         TutorsGroup tutorsGroup = tutorsGroupRepository.findById(groupId).orElseThrow(() -> new ResourceNotFoundException(TutorsGroup.class, "id", groupId));
         TutorsGroupJoinRequest joinRequest = new TutorsGroupJoinRequest();
         joinRequest.setMember(member);
@@ -50,7 +48,6 @@ public class TutorsGroupService {
 
     @Transactional
     public TutorsGroupJoinRequest acceptJoinRequest(Long requestId) {
-
         TutorsGroupJoinRequest request = tutorsGroupJoinRequestRepository.findById(requestId).orElseThrow(() -> new ResourceNotFoundException(TutorsGroupJoinRequest.class, "id", requestId));
         request.setAccepted(true);
         TutorsGroup tutorsGroup = request.getTutorsGroup();
@@ -71,8 +68,8 @@ public class TutorsGroupService {
     }
 
     public List<TutorsGroup> getJoinableGroupsForMember(Member member) {
-
         List<TutorsGroup> allGroups = tutorsGroupRepository.findAll();
+
         return allGroups.stream().filter(tutorsGroup -> !(tutorsGroup.getMembers().contains(member))).collect(Collectors.toList());
     }
 

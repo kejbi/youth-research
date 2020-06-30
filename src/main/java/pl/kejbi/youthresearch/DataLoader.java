@@ -19,6 +19,8 @@ public class DataLoader implements CommandLineRunner {
 
     private final TutorsGroupRepository tutorsGroupRepository;
 
+    private final TutorsGroupJoinRequestRepository tutorsGroupJoinRequestRepository;
+
     private final PostRepository postRepository;
 
     private final PollRepository pollRepository;
@@ -78,6 +80,11 @@ public class DataLoader implements CommandLineRunner {
 
         group2.addMember(member1);
         group2 = tutorsGroupRepository.save(group2);
+
+        TutorsGroupJoinRequest request = new TutorsGroupJoinRequest();
+        request.setMember(member2);
+        request.setTutorsGroup(group2);
+        tutorsGroupJoinRequestRepository.save(request);
 
         for(int i=0; i<10; i++){
             Post post = new Post();
