@@ -1,6 +1,8 @@
 package pl.kejbi.youthresearch.controller;
 
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,9 +30,9 @@ public class AuthController {
 
     private final AuthService authService;
 
-    private final AuthenticationManager authenticationManager;
-
     private final JwtProvider jwtProvider;
+
+    private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/register")
     public UserDTO registerUser(@RequestBody @Valid RegistrationRequest registrationRequest, BindingResult bindingResult) {
@@ -48,6 +50,8 @@ public class AuthController {
                 registrationRequest.isTutor()
         );
 
+        logger.info("Registered user: " + registrationRequest.getUsername());
+
         return new UserDTO(user);
     }
 
@@ -63,6 +67,8 @@ public class AuthController {
         response.setToken(token);
         response.setUsername(jwtProvider.getUsernameFromJwt(token));
         response.setRole(jwtProvider.getRoleFromJwt(token));
+
+        logger.info("Logged in user: " + loginRequest.getUsername());
 
         return response;
     }

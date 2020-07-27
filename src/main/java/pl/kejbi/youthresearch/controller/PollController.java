@@ -26,6 +26,7 @@ public class PollController {
     private final PollService pollService;
 
     @PostMapping
+    @Secured("ROLE_TUTOR")
     public PollDTO createPoll(@AuthenticationPrincipal AuthUser user, @RequestBody @Valid PollDTO pollDTO, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -50,6 +51,7 @@ public class PollController {
     }
 
     @DeleteMapping("/{pollId}")
+    @Secured("ROLE_TUTOR")
     public void deletePoll(@AuthenticationPrincipal AuthUser user, @PathVariable Long pollId) {
 
         Tutor tutor = (Tutor) user.getUser();
@@ -58,6 +60,7 @@ public class PollController {
     }
 
     @PutMapping
+    @Secured("ROLE_MEMBER")
     public PollDTO voteInPoll(@AuthenticationPrincipal AuthUser user, @RequestBody @Valid VoteDTO voteDTO, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {

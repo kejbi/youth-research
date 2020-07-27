@@ -29,6 +29,8 @@ public class DataLoader implements CommandLineRunner {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final GradeRepository gradeRepository;
+
     @Override
     public void run(String... args) throws Exception {
 
@@ -118,6 +120,14 @@ public class DataLoader implements CommandLineRunner {
                 answer.setPoll(poll);
                 answerRepository.save(answer);
             }
+        }
+
+        for(int i=0; i<7; i++){
+            Grade grade = new Grade();
+            grade.setMember(member1);
+            grade.setTutorsGroup(group2);
+            grade.setScore(i);
+            gradeRepository.save(grade);
         }
     }
 }
